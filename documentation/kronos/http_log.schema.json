@@ -1,0 +1,58 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/devKaos117/Olympus.py/blob/main/documentation/kronos/http_log.schema.json",
+    "title": "HTTP Log",
+    "description": "Logging object extracted from requests.Response objects",
+    "type": "object",
+    "readOnly": true,
+    "properties": {
+        "request": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "host": {
+                    "description": "Request host URI",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "Request path inside domain",
+                    "type": "string"
+                },
+                "method": {
+                    "description": "HTTP request method",
+                    "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "TRACE", "OPTIONS", "CONNECT"]
+                },
+                "headers": {
+                    "description": "HTTP request headers",
+                    "type": "object"
+                },
+                "query_params": {
+                    "description": "Request query parameters",
+                    "type": "object"
+                }
+            }
+        },
+        "response": {
+            "status_code": {
+                "description": "HTTP response status code",
+                "type": "integer"
+            },
+            "elapsed_time_ms": {
+                "description": "Time taken to recieve the response in miliseconds",
+                "type": "number"
+            },
+            "size": {
+                "description": "Response size in human readable format",
+                "type": "string"
+            },
+            "headers": {
+                "description": "HTTP response headers",
+                "type": "object"
+            },
+            "cookies": {
+                "description": "HTTP response cookies",
+                "type": "object"
+            }
+        }
+    }
+}

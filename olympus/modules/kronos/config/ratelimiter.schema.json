@@ -1,0 +1,27 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/devKaos117/Kronos.py/blob/main/kronos/config/ratelimiter.schema.json",
+    "title": "kronos.RateLimiter config schema",
+    "description": "Configuration dictionary to kronos RateLimiter class",
+    "type": "object",
+    "properties": {
+        "limit": {
+            "description": "The limit of occurrences in the defined time period",
+            "type": "integer",
+            "minimum": 0,
+            "default": 30
+        },
+        "time_period": {
+            "description": "The time period for the rating limit",
+            "type": "integer",
+            "minimum": 0,
+            "default": 60
+        },
+        "multiprocessing_mode": {
+            "description": "Defines if the RateLimiter works for multiprocessing instead of multithreading",
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "required": ["limit", "time_period"]
+}

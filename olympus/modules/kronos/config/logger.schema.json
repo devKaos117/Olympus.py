@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/devKaos117/Kronos.py/blob/main/kronos/config/logger.schema.json",
+    "title": "kronos.Logger config schema",
+    "description": "Configuration dictionary to kronos Logger class",
+    "type": "object",
+    "properties": {
+        "console_level": {
+            "description": "Logging level for the console",
+            "type": ["string", "integer", "null"],
+            "enum": ["NONE", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET", 99, 50, 40, 30, 20, 10, 0],
+            "minimum": 0,
+            "maximum": 99,
+            "default": null
+        },
+        "file_level": {
+            "description": "Logging level for the file output",
+            "type": ["string", "integer", "null"],
+            "enum": ["NONE", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET", 99, 50, 40, 30, 20, 10, 0],
+            "minimum": 0,
+            "maximum": 99,
+            "default": null
+        },
+        "log_directory": {
+            "description": "Logging file output directory",
+            "type": ["string", "null"],
+            "default": null
+        }
+    }
+}

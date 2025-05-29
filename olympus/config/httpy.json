@@ -1,0 +1,9 @@
+{
+    "randomize-agent": true,
+    "max-retries": 3,
+    "retry_status_codes": [429, 500, 502, 503, 504],
+    "success_status_codes": [200, 201, 202, 203, 204, 205, 206, 207, 208],
+    "timeout": 10,
+    "headers": {
+    }
+}
