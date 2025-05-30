@@ -27,7 +27,7 @@
         },
         "json_indentation": {
             "description": "Level of indentation for the JSON logging",
-            "type": "integer",
+            "type": ["integer", "null"],
             "minimum": 0
         }
     },

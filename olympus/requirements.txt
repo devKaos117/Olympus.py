@@ -4,7 +4,7 @@ requests==2.32.3 # kronos and hermes
 # hermes requirements
 
 # kronos requirements
-
+colorama==0.4.6 # logger
 # morpheus requirements
 
 # utils requirements

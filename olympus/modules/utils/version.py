@@ -2,6 +2,38 @@ import re
 from packaging import version
 from typing import List, Tuple, Optional
 
+
+# VersionCheck.is_valid("1.0") # True
+# VersionCheck.is_valid("1.0.0-alpha") # True
+# VersionCheck.is_valid("1.*.0") # False
+# VersionCheck.is_valid("version1") # False
+# VersionCheck.is_valid("1.x.0") # False
+# VersionCheck.is_valid("1..0") # False
+
+# VersionCheck.compare("1.0.0", "<", "1.0.1") # True
+# VersionCheck.compare("1.0", "<", "1.0.1") # True
+# VersionCheck.compare("1.2.3", "<", "1.2.3") # False
+# VersionCheck.compare("2.0.0", ">", "1.9.9") # True
+# VersionCheck.compare("1.0.0.1", ">", "1.0.0") # True
+# VersionCheck.compare("1.2.3", ">=", "1.2.3") # True
+# VersionCheck.compare("1.2.3", "==", "1.2.3") # True
+# VersionCheck.compare("1", "==", "1.0.0") # True
+
+# VersionCheck.compare("1.0.0-alpha", "<", "1.0.0-beta") # True
+# VersionCheck.compare("1.0.0+build1", ">", "1.0.0+build0") # True
+# VersionCheck.compare("1.0.0", ">", "1.0.0-beta") # True
+
+# VersionCheck.compare("1.2.*", "==", "1.2.0") # True
+# VersionCheck.compare("1.*", "<", "1.1.0") # True
+# VersionCheck.compare("1.0.*-alpha", "==", "1.0.0-alpha") # True
+# VersionCheck.compare("1.0.0-*", "==", "1.0.0-beta") # True
+
+# VersionCheck.is_covered("1.2.3", min="1.0.0", max="2.0.0") # True
+# VersionCheck.is_covered("0.9.0", min="1.0.0", max="2.0.0") # False
+# VersionCheck.is_covered("2.1.0", min="1.0.0", max="2.0.0") # False
+# VersionCheck.is_covered("2.0.0", min="1.0.0", max="2.0.0") # True
+# VersionCheck.is_covered("2.0.0", min="1.0.0", max="2.0.0", including=False) # False
+
 class VersionCheck:
 
     # Pattern for matching version strings with possible wildcards

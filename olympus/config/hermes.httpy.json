@@ -1,9 +1,45 @@
 {
-    "randomize-agent": true,
-    "max-retries": 3,
-    "retry_status_codes": [429, 500, 502, 503, 504],
-    "success_status_codes": [200, 201, 202, 203, 204, 205, 206, 207, 208],
-    "timeout": 10,
-    "headers": {
+    "request": {
+        "randomize_agent": true,
+        "success_codes": [200, 201, 202, 203, 204, 205, 206, 207, 208],
+        "timeout": 10,
+        "retries": {
+            "max": 3,
+            "codes": [429, 500, 502, 503, 504]
+        },
+        "headers": {}
+    },
+    "session": {
+        "pool_size": 1,
+        "timeout": 300,
+        "cookiejar": {
+            "enable": false,
+            "path": "./cookiejar.json"
+        }
+    },
+    "proxy": {
+        "enabled": false,
+        "pool": [
+            {
+                "usr": "",
+                "pwd": "",
+                "protocol": "http",
+                "host": "",
+                "port": 8080,
+                "weight": 1
+            }
+        ],
+        "rotation": {
+            "strategy": "random",
+            "rotate_on_failure": true,
+            "max_failures": 10,
+            "cooldown": 180
+        },
+        "health_check": {
+            "enabled": false,
+            "url": "http://httpbin.org/ip",
+            "interval": 60,
+            "timeout": 15
+        }
     }
 }
