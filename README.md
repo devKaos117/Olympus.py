@@ -38,41 +38,20 @@ Project structure
 ```txt
 olympus/
 ├── config
-│   ├── hermes.httpy.json
-│   ├── kronos.logger.json
-│   └── kronos.ratelimiter.json
+│   └── module.class.json
 ├── log/
 │   └── yyyy-MM-ddThh-mm-ss.log
 ├── modules
-│   ├── hermes
-│   │   ├── config
-│   │   │   └── httpy.schema.json
-│   │   ├── utils
-│   │   │   ├── __init__.py
-│   │   │   └── user_agent.py
-│   │   ├── __init__.py
-│   │   ├── http.py
-│   │   └── requirements.txt
-│   ├── kronos
-│   │   ├── config
-│   │   │   ├── logger.schema.json
-│   │   │   └── ratelimiter.schema.json
-│   │   ├── utils
-│   │   │   ├── __init__.py
-│   │   │   ├── http.py
-│   │   │   └── tracing.py
-│   │   ├── __init__.py
-│   │   ├── logger.py
-│   │   ├── rate_limiter.py
-│   │   └── requirements.txt
-│   ├── morpheus
+│   ├── module/
 │   │   ├── config/
-│   │   └── __init__.py
-│   ├── utils
-│   │   ├── __init__.py
-│   │   ├── configuration.py
-│   │   ├── version.py
-│   │   └── requirements.txt
+│   │   │   └── class.schema.json
+│   │   ├── utils/
+│   │   ├── __init__.py
+│   │   └── requirements.txt
+│   ├── hermes/
+│   ├── kronos/
+│   ├── morpheus/
+│   ├── utils/
 │   └── __init__.py
 ├── __init__.py
 ├── pyproject.toml
