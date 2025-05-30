@@ -11,11 +11,12 @@ class HTTPy:
     """
     HTTPy
 
-    A flexible HTTP client with built-in retry, timeout, and rate limiting capabilities
-    Buil-in usage of Kronos.py and utils/configuration
+    A flexible HTTP client with built-in retry, timeout, proxy rotation,
+    cookies and session maintanability. Buit-in usage of kronos.Logger
+    and kronos.RateLimiter
     """
 
-    def __init__(self, logger: Optional[kronos.Logger] = None, rate_limiter: Optional[kronos.RateLimiter] = None, config: Optional[Dict[str, Any]] = {}):
+    def __init__(self, logger: kronos.Logger, rate_limiter: Optional[kronos.RateLimiter] = None):
         """
         Initialize the HTTP client with the provided configuration
 
@@ -23,13 +24,10 @@ class HTTPy:
             config: Configuration dictionary
             logger: kronos.Logger instance to use
         """
-        if logger:
-            self._logger = logger
-        else:
-            self._logger = kronos.Logger({"console_level": None, "file_level": None, "log_directory": None})
-
-        self._config = ConfigManager.load(config)
+        self._logger = logger
         self._rate_limiter = rate_limiter
+
+        self._config = ConfigManager.load()
         self._session = self._create_session()
 
         self._logger.debug("HTTPy config", self._config)
@@ -37,7 +35,7 @@ class HTTPy:
 
     def _create_session(self) -> requests.Session:
         """
-        Create and configure a requests Session with retry capabilities
+        Create and configure a requests Session
 
         Returns:
             requests.Session: Configured session object
@@ -45,7 +43,7 @@ class HTTPy:
         session = requests.Session()
 
         # Set default headers
-        session.headers = self._config['headers']
+        session.headers = self._config['request']['headers']
         self._logger.debug("Session initialized")
 
         return session
@@ -63,24 +61,24 @@ class HTTPy:
             requests.Response: Response from the server or None
         """
         # Apply default timeout if not specified in kwargs
-        if 'timeout' not in kwargs:
-            kwargs['timeout'] = self._config['timeout']
+        if "timeout" not in kwargs:
+            kwargs['timeout'] = self._config['request']['timeout']
 
         # Merge default headers with any provided in kwargs
-        if 'headers' in kwargs:
-            merged_headers = ConfigManager.deep_merge(kwargs['headers'], self._config['headers'].copy())
+        if "headers" in kwargs:
+            merged_headers = ConfigManager.deep_merge(kwargs['headers'], self._config['request']['headers'].copy())
             kwargs['headers'] = merged_headers
 
         # Make requests
         response = None
         retries = 0
 
-        while retries <= self._config["max-retries"]:
+        while retries <= self._config['request']['retries']['max']:
             # Apply rate limiting if enabled
             if self._rate_limiter:
                 self._rate_limiter.acquire()
             try:
-                if self._config["randomize-agent"]:
+                if self._config['request']['randomize_agent']:
                     self._session.headers.update({"User-Agent": UserAgent.random()})
 
                 response = self._session.request(method, url, **kwargs)
@@ -89,10 +87,10 @@ class HTTPy:
                 self._handle_response_status(response)
 
                 # Stop retries if successful
-                if response.status_code in self._config["success_status_codes"]:
+                if response.status_code in self._config['request']['success_codes']:
                     break    
                 # Stop retries if not configured to repeat
-                if response.status_code not in self._config["retry_status_codes"]:
+                if response.status_code not in self._config['request']['retries']['codes']:
                     break
             except requests.RequestException as e:
                 self._logger.exception(f"Network error making request: {str(e)}")
@@ -104,7 +102,7 @@ class HTTPy:
 
             retries += 1
 
-        if response is None or response.status_code not in self._config["success_status_codes"]:
+        if response is None or response.status_code not in self._config['request']['success_codes']:
             self._logger.error(f"HTTP request failed after {retries - 1 if retries > 0 else 0} retries")
             raise Exception("Unsuccessful request")
         else:

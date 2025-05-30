@@ -3,6 +3,8 @@ import random
 
 class UserAgent:
     """
+    Class defined to list and provide a random user
+    agent for the HTTP requests
     """
     
     agents = [

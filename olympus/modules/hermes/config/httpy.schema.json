@@ -5,85 +5,186 @@
     "description": "Configuration dictionary to hermes HTTP client",
     "type": "object",
     "properties": {
-        "randomize-agent": {
-            "description": "Defines if the HTTP client will use random user agents for each request",
-            "type": "boolean",
-            "default": true
-        },
-        "max-retries": {
-            "description": "Indicates the number of retries that the client will perform for failed requests",
-            "type": "integer",
-            "minimum": 0,
-            "default": 3
-        },
-        "retry_status_codes": {
-            "description": "List the HTTP status codes that will trigger a retry",
-            "type": "array",
-            "items": {
-                "type": "integer"
-            },
-            "default": [429, 500, 502, 503, 504]
-        },
-        "success_status_codes": {
-            "description": "List the HTTP status codes that will be considered as a success",
-            "type": "array",
-            "items": {
-                "type": "integer"
-            },
-            "default": [200, 201, 202, 203, 204, 205, 206, 207, 208]
-        },
-        "timeout": {
-            "description": "Defines the request timeout in seconds",
-            "type": "integer",
-            "minimum": 0,
-            "default": 10
-        },
-        "headers": {
-            "description": "A dictionary containing the default headers to be used in all requests",
+        "request": {
+            "description": "Options for defaults to every request sent",
             "type": "object",
             "properties": {
-                "Accept": {
-                    "description": "",
-                    "type": "string"
+                "randomize_agent": {
+                    "description": "Defines if the HTTP client will use a random user agent for each request",
+                    "type": "boolean"
                 },
-                "Accept-Encoding": {
-                    "description": "",
-                    "type": "string"
+                "success_codes": {
+                    "description": "List the HTTP status codes that will be considered as a success",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
-                "Accept-Language": {
-                    "description": "",
-                    "type": "string"
+                "timeout": {
+                    "description": "Defines the request timeout in seconds",
+                    "type": "integer",
+                    "minimum": 0
                 },
-                "Access-Control-Request-Headers": {
+                "retries": {
                     "description": "",
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "max": {
+                            "description": "Indicates the number of retries that the client will perform for failed requests",
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "codes": {
+                            "description": "List the HTTP status codes that will trigger a retry",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "required": ["max", "codes"]
                 },
-                "Access-Control-Request-Method": {
-                    "description": "",
-                    "type": "string"
-                },
-                "Authorization": {
-                    "description": "",
-                    "type": "string"
-                },
-                "Cache-Control": {
-                    "description": "",
-                    "type": "string"
-                },
-                "Connection": {
-                    "description": "",
-                    "type": "string"
-                },
-                "DNT": {
-                    "description": "",
-                    "type": "string"
-                },
-                "User-Agent": {
-                    "description": "",
-                    "type": "string"
+                "headers": {
+                    "description": "A dictionary containing the headers to be used in all requests",
+                    "type": "object",
+                    "properties": {
+                        "Accept": {"type": "string"},
+                        "Accept-Encoding": {"type": "string"},
+                        "Accept-Language": {"type": "string"},
+                        "Access-Control-Request-Headers": {"type": "string"},
+                        "Access-Control-Request-Method": {"type": "string"},
+                        "Authorization": {"type": "string"},
+                        "Cache-Control": {"type": "string"},
+                        "Connection": {"type": "string"},
+                        "DNT": {"type": "string"},
+                        "User-Agent": {"type": "string"}
+                    }
                 }
             },
-            "default": {}
+            "required": ["randomize_agent", "success_codes", "timeout", "retries", "headers"]
+        },
+        "session": {
+            "description": "Session and cookie management configuration",
+            "type": "object",
+            "properties": {
+                "pool_size": {
+                    "description": "Defines the size for the session pool",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "timeout": {
+                    "description": "Defines each session timeout in seconds",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "cookiejar": {
+                    "description": "Configuration about cookie persitence",
+                    "type": "object",
+                    "properties": {
+                        "enable": {
+                            "description": "Defines if the persitence will be used",
+                            "type": "boolean"
+                        },
+                        "path": {
+                            "description": "Points to the cookiejar json file",
+                            "type": "string"
+                        }
+                    },
+                    "required": ["enable", "path"]
+                }
+            },
+            "required": ["pool_size", "timeout", "cookiejar"]
+        },
+        "proxy": {
+            "description": "Proxy configuration for HTTP requests",
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "Defines if the proxy will be used",
+                    "type": "boolean"
+                },
+                "pool": {
+                    "description": "List of proxy configurations",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "usr": {
+                                "type": "string"
+                            },
+                            "pwd": {
+                                "type": "string"
+                            },
+                            "protocol": {
+                                "type": "string",
+                                "enum": ["http", "https", "socks4", "socks5"]
+                            },
+                            "host": {
+                                "type": "string"
+                            },
+                            "port": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 65535
+                            },
+                            "weight": {
+                                "type": "integer",
+                                "minimum": 1
+                            }
+                        },
+                        "required": ["protocol", "host"]
+                    }
+                },
+                "rotation": {
+                    "description": "Proxy rotation configuration",
+                    "type": "object",
+                    "properties": {
+                        "strategy": {
+                            "description": "Specify the strategy for the proxy rotation",
+                            "type": "string", 
+                            "enum": ["round-robin", "random", "weighted"]
+                        },
+                        "rotate_on_failure": {
+                            "description": "Defines if the client should rotate the proxy on request failure",
+                            "type": "boolean"
+                        },
+                        "max_failures": {
+                            "description": "Defines the maximum allowable fails",
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "cooldown": {
+                            "description": "Defines the time in seconds to rotate the proxy",
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    }
+                },
+                "health_check": {
+                    "description": "Proxy health monitoring",
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "url": {
+                            "type": "string"
+                        },
+                        "interval": {
+                            "description": "Defines the time in seconds to perform a health check",
+                            "type": "integer",
+                            "minimum": 30
+                        },
+                        "timeout": {
+                            "description": "Defines the timeout in seconds for the health check to fail",
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                }
+            },
+            "required": ["enabled"]
         }
-    }
+    },
+    "required": ["request", "session", "proxy"]
 }
