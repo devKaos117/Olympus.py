@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/devKaos117/Hermes.py/blob/main/hermes/config/httpy.schema.json",
+    "$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/hermes/config/httpy.schema.json",
     "title": "hermes.HTTPy config schema",
     "description": "Configuration dictionary to hermes HTTP client",
     "type": "object",

@@ -21,8 +21,8 @@ class HTTPy:
         Initialize the HTTP client with the provided configuration
 
         Args:
-            config: Configuration dictionary
             logger: kronos.Logger instance to use
+            config: Configuration dictionary
         """
         self._logger = logger
         self._rate_limiter = rate_limiter
