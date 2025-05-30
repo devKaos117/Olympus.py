@@ -1,10 +1,10 @@
 import time, requests
 from typing import Dict, Any, Optional
 
-import kronos # https://github.com/devKaos117/Kronos.py
+from .utils.user_agent import UserAgent
 
-from utils.configuration import ConfigManager
-from utils.user_agent import UserAgent
+from .. import kronos
+from ..utils.configuration import ConfigManager
 
 
 class HTTPy:

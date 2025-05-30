@@ -1,10 +1,10 @@
 import time, threading, multiprocessing
 from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
-
-from .utils.configuration import ConfigManager
+from typing import List
 
 from .logger import Logger
+
+from ..utils.configuration import ConfigManager
 
 
 class RateLimiter:
@@ -12,30 +12,31 @@ class RateLimiter:
     Rate limiter to ensure limits are respected in multithreading or multiprocessing
     Implements a token bucket algorithm for rate limiting
     """
-    def __init__(self, logger: Optional[Logger] = None, config: Optional[Dict[str, Any]] = {}):
+    def __init__(self, logger: Logger = None):
         """
         Initialize rate limiter
 
         Args:
-            limit: Maximum number of requests allowed in the time period
-            time_period: Time period in seconds
-            multiprocessing_mode: True if this is used in a multiprocessing task
-            logger: Optional logger instance for reporting rate limit events
+            logger: Logger instance for reporting rate limit events
         """
-        self._config = ConfigManager.load(config)
+        # Load configurations
+        self._config = ConfigManager.load()
+        
+        # Load logger
         self._logger = logger
 
+        # Initialize either in multiprocessing or multithreading mode
         if self._config['multiprocessing_mode']:
             manager = multiprocessing.Manager()
             self._lock = manager.Lock()
             self._timestamps = manager.list()
-            if self._logger:
-                self._logger.info(f"Multiprocessing RateLimiter initialized with {self._config['limit']} requests per {self._config['time_period']} seconds")
+            self._logger.debug("Multiprocessing RateLimiter config", self._config)
+            self._logger.info(f"Multiprocessing RateLimiter initialized")
         else:
             self._lock = threading.Lock()
             self._timestamps: List[datetime] = []
-            if self._logger:
-                self._logger.info(f"Multithreading RateLimiter initialized with {self._config['limit']} requests per {self._config['time_period']} seconds")
+            self._logger.debug("Multiprocessing RateLimiter config", self._config)
+            self._logger.info(f"Multithreading RateLimiter initialized")
 
     def acquire(self) -> bool:
         """
@@ -67,8 +68,7 @@ class RateLimiter:
                     oldest = self._timestamps[0]
                     wait_time = (oldest + timedelta(seconds=self._config['time_period']) - now).total_seconds()
                     if wait_time > 0:
-                        if self._logger:
-                            self._logger.debug(f"RateLimiter triggered for {wait_time:.2f} seconds")
+                        self._logger.debug(f"RateLimiter triggered for {wait_time:.2f} seconds")
                         time.sleep(wait_time)
 
             self._timestamps.append(now)

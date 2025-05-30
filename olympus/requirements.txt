@@ -1,2 +1,12 @@
-# Core dependencies
-requests>=2.20.0
+# shared requirements
+requests==2.32.3 # kronos and hermes
+
+# hermes requirements
+
+# kronos requirements
+
+# morpheus requirements
+
+# utils requirements
+jsonschema==4.19.2
+packaging==24.2

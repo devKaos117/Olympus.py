@@ -32,11 +32,51 @@ A unified python environment integrating different custom tools for device and n
 
 ## Usage <a name = "usage"></a>
 
-### Installation <a name = "usage-installation"></a>
-Lorem ipsum dolor sit amet
+### Setup <a name = "usage-installation"></a>
+Project structure
 
-```bash
-kill -9 1
+```txt
+olympus/
+├── config
+│   ├── hermes.httpy.json
+│   ├── kronos.logger.json
+│   └── kronos.ratelimiter.json
+├── log/
+│   └── yyyy-MM-ddThh-mm-ss.log
+├── modules
+│   ├── hermes
+│   │   ├── config
+│   │   │   └── httpy.schema.json
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   └── user_agent.py
+│   │   ├── __init__.py
+│   │   ├── http.py
+│   │   └── requirements.txt
+│   ├── kronos
+│   │   ├── config
+│   │   │   ├── logger.schema.json
+│   │   │   └── ratelimiter.schema.json
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── http.py
+│   │   │   └── tracing.py
+│   │   ├── __init__.py
+│   │   ├── logger.py
+│   │   ├── rate_limiter.py
+│   │   └── requirements.txt
+│   ├── morpheus
+│   │   ├── config/
+│   │   └── __init__.py
+│   ├── utils
+│   │   ├── __init__.py
+│   │   ├── configuration.py
+│   │   ├── version.py
+│   │   └── requirements.txt
+│   └── __init__.py
+├── __init__.py
+├── pyproject.toml
+└── requirements.txt
 ```
 
 ### Examples <a name = "usage-examples"></a>

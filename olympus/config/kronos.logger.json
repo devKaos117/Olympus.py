@@ -1,0 +1,7 @@
+{
+    "console_level": 20,
+    "file_level": 10,
+    "log_directory": "log",
+    "colorize": true,
+    "json_indentation": 2
+}
