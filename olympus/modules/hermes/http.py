@@ -176,3 +176,18 @@ class HTTPy:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit that ensures session closure."""
         self.close()
+
+
+class AsyncHTTPy(HTTPy):
+    """
+    """
+
+    def __init__(self, logger: kronos.Logger, rate_limiter: Optional[kronos.RateLimiter] = None):
+        """
+        Initialize the HTTP client with the provided configuration
+
+        Args:
+            logger: kronos.Logger instance to use
+            config: Configuration dictionary
+        """
+        pass
