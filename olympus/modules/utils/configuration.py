@@ -1,7 +1,7 @@
 import json, inspect
 from pathlib import Path
 from jsonschema import validate, ValidationError
-from typing import Dict, Any, Optional
+from typing import Dict, Mapping, Any, Optional
 
 
 class ConfigManager:
@@ -11,10 +11,13 @@ class ConfigManager:
     """
 
     @staticmethod
-    def load() -> Dict[str, Any]:
+    def load(input: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Automatically load and validate configuration for the calling class
         
+        Args:
+            input: Alterations for the configuration
+
         Returns:
             Dict: Validated configuration dictionary
             
@@ -29,11 +32,38 @@ class ConfigManager:
         
         # Load the configuration file
         config = ConfigManager._load_config(invoker_info)
+
+        # Merge the config with the given input
+        if input:
+            config = ConfigManager.deep_merge(config, input)
         
         # Validate configuration against schema
         ConfigManager._validate_config(config, schema, invoker_info)
         
         return config
+    
+    @staticmethod
+    def deep_merge(source: Dict[str, Any], target: Dict[str, Any], merge_free: Optional[bool] = False) -> Dict[str, Any]:
+        """
+        Recursively merge the values of two dictionaries, altering the source with the target
+
+        Args:
+            source: Source dictionary to merge from
+            target: Target dictionary to merge into
+            merge_free: Ignore the source keys and merge both dictionaries, one into another
+
+        Returns:
+            Dict: Merged dictionary
+        """
+        result = source.copy()
+
+        for key, value in target.items():
+            if key in source or merge_free:
+                if isinstance(source[key], dict) and isinstance(value, Mapping):
+                    result[key] = ConfigManager.deep_merge(result[key], value)
+                else:
+                    result[key] = value
+        return result
 
     @staticmethod
     def _get_invoker_info() -> Dict[str, str]:

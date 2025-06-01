@@ -66,7 +66,7 @@ class HTTPy:
 
         # Merge default headers with any provided in kwargs
         if "headers" in kwargs:
-            merged_headers = ConfigManager.deep_merge(kwargs['headers'], self._config['request']['headers'].copy())
+            merged_headers = ConfigManager.deep_merge(source=self._config['request']['headers'], target=kwargs['headers'], merge_free=True)
             kwargs['headers'] = merged_headers
 
         # Make requests
