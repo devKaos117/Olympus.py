@@ -16,18 +16,19 @@ class HTTPy:
     and kronos.RateLimiter
     """
 
-    def __init__(self, logger: kronos.Logger, rate_limiter: Optional[kronos.RateLimiter] = None):
+    def __init__(self, logger: kronos.Logger, rate_limiter: Optional[kronos.RateLimiter] = None, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the HTTP client with the provided configuration
 
         Args:
-            logger: kronos.Logger instance to use
+            logger: ``kronos.Logger`` instance to use
+            rate_limiter: ``kronos.RateLimiter`` instance to use
             config: Configuration dictionary
         """
         self._logger = logger
         self._rate_limiter = rate_limiter
 
-        self._config = ConfigManager.load()
+        self._config = ConfigManager.load(config)
         self._session = self._create_session()
 
         self._logger.debug("HTTPy config", self._config)

@@ -44,12 +44,16 @@ class Logger:
         "RESET": "\033[0m"       # Reset to default
     }
 
-    def __init__(self):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the logger
+        
+        Args:
+            config: Dictionary with specific configuration
+
         """
         # Load configurations
-        self._config = ConfigManager.load()
+        self._config = ConfigManager.load(config)
 
         # Configure console handler
         # self._console_handler = logging.StreamHandler(sys.stdout)

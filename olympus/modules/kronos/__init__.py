@@ -9,5 +9,6 @@ multi-threaded/multi-process environments
 
 from .logger import Logger
 from .rate_limiter import RateLimiter
+from .stopwatch import Stopwatch
 
-__all__ = ["Logger", "RateLimiter"]
+__all__ = ["Logger", "RateLimiter", "Stopwatch"]

@@ -1,6 +1,6 @@
 import time, threading, multiprocessing
 from datetime import datetime, timedelta
-from typing import List
+from typing import Dict, List, Any, Optional
 
 from .logger import Logger
 
@@ -12,7 +12,7 @@ class RateLimiter:
     Rate limiter to ensure limits are respected in multithreading or multiprocessing
     Implements a token bucket algorithm for rate limiting
     """
-    def __init__(self, logger: Logger = None):
+    def __init__(self, logger: Logger = None, config: Optional[Dict[str, Any]] = None):
         """
         Initialize rate limiter
 
@@ -20,7 +20,7 @@ class RateLimiter:
             logger: Logger instance for reporting rate limit events
         """
         # Load configurations
-        self._config = ConfigManager.load()
+        self._config = ConfigManager.load(config)
         
         # Load logger
         self._logger = logger

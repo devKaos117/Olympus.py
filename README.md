@@ -39,6 +39,8 @@ Project structure
 olympus/
 ├── config
 │   └── module.class.json
+├── database
+│   └── data.db
 ├── log/
 │   └── yyyy-MM-ddThh-mm-ss.log
 ├── modules

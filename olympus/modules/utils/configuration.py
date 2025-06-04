@@ -35,7 +35,7 @@ class ConfigManager:
 
         # Merge the config with the given input
         if input:
-            config = ConfigManager.deep_merge(config, input)
+            config = ConfigManager.deep_merge(source=config, target=input, merge_free=False)
         
         # Validate configuration against schema
         ConfigManager._validate_config(config, schema, invoker_info)
