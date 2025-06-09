@@ -7,6 +7,8 @@ requests==2.32.3 # kronos and hermes
 colorama==0.4.6 # logger
 # morpheus requirements
 
+# polyhymnia
+
 # utils requirements
 jsonschema==4.19.2
 packaging==24.2
