@@ -3,38 +3,9 @@ from packaging import version
 from typing import List, Tuple, Optional
 
 
-# VersionCheck.is_valid("1.0") # True
-# VersionCheck.is_valid("1.0.0-alpha") # True
-# VersionCheck.is_valid("1.*.0") # False
-# VersionCheck.is_valid("version1") # False
-# VersionCheck.is_valid("1.x.0") # False
-# VersionCheck.is_valid("1..0") # False
-
-# VersionCheck.compare("1.0.0", "<", "1.0.1") # True
-# VersionCheck.compare("1.0", "<", "1.0.1") # True
-# VersionCheck.compare("1.2.3", "<", "1.2.3") # False
-# VersionCheck.compare("2.0.0", ">", "1.9.9") # True
-# VersionCheck.compare("1.0.0.1", ">", "1.0.0") # True
-# VersionCheck.compare("1.2.3", ">=", "1.2.3") # True
-# VersionCheck.compare("1.2.3", "==", "1.2.3") # True
-# VersionCheck.compare("1", "==", "1.0.0") # True
-
-# VersionCheck.compare("1.0.0-alpha", "<", "1.0.0-beta") # True
-# VersionCheck.compare("1.0.0+build1", ">", "1.0.0+build0") # True
-# VersionCheck.compare("1.0.0", ">", "1.0.0-beta") # True
-
-# VersionCheck.compare("1.2.*", "==", "1.2.0") # True
-# VersionCheck.compare("1.*", "<", "1.1.0") # True
-# VersionCheck.compare("1.0.*-alpha", "==", "1.0.0-alpha") # True
-# VersionCheck.compare("1.0.0-*", "==", "1.0.0-beta") # True
-
-# VersionCheck.is_covered("1.2.3", min="1.0.0", max="2.0.0") # True
-# VersionCheck.is_covered("0.9.0", min="1.0.0", max="2.0.0") # False
-# VersionCheck.is_covered("2.1.0", min="1.0.0", max="2.0.0") # False
-# VersionCheck.is_covered("2.0.0", min="1.0.0", max="2.0.0") # True
-# VersionCheck.is_covered("2.0.0", min="1.0.0", max="2.0.0", including=False) # False
-
-class VersionCheck:
+class Version:
+    """
+    """
 
     # Pattern for matching version strings with possible wildcards
     # Format: major.minor.patch.build + optional suffix
@@ -44,12 +15,12 @@ class VersionCheck:
     #   - \d+ : Starts with one or more digits (major version)
     #   - (?:(?:\.\d+){0,2}) : Followed by 0-2 occurrences of dot + digits (minor.patch)
     #   - (?:(?:\.\*)|(?:\.\d+))? : Optional final component that can be .* or .digits (build)
-    # 
+    #
     # 2. ((?:[a-zA-Z](?:\d+)?|\*)|(?:(?:-|_|\+)(?:[a-zA-Z0-9_\-\+]+|\*)))? - Optional suffix group:
     #   - (?:[a-zA-Z](?:\d+)?|\*) : Single letter suffix (followed or not by numbers) or wildcard
     #   - OR
     #   - (?:(?:-|_|\+)(?:[a-zA-Z0-9_\-\+]+|\*)) : Delimiter followed by alphanumeric suffix or wildcard
-    
+
     # Pattern for matching specific version strings without wildcards
     # Format: major.minor.patch.build + optional suffix
     _EXTRACTION_PATTERNS = [
@@ -70,28 +41,28 @@ class VersionCheck:
     # 1. (\d+(?:\.\d+){0,3}) - Version numbers group:
     #   - \d+ : Starts with one or more digits (major version)
     #   - (?:\.\d+){0,3} : Followed by 0-3 occurrences of dot + digits (minor.patch.build)
-    # 
+    #
     # 2. ((?:[a-zA-Z](?:\d+)?)|(?:(?:-|_|\+)(?:[a-zA-Z0-9_\-\+]+))) - Suffix group:
     #   - (?:[a-zA-Z](?:\d+)?) : Single letter suffix followed or not by numbers
     #   - OR
     #   - (?:(?:-|_|\+)(?:[a-zA-Z0-9_\-\+]+)) : Delimiter followed by alphanumeric suffix
 
     _SUPPORTED_COMPARISONS = ["<", "<=", "==", ">=", ">"]
-    
+
     @staticmethod
     def is_valid(v: str) -> bool:
         """
         Check if a version string is valid
-        
+
         Args:
             v: Version string to check
-        
+
         Returns:
             True if matched by pattern
-        
+
         """
-        return True if re.match(f"^{VersionCheck._PATTERN}$", v) else False
-    
+        return True if re.match(f"^{Version._PATTERN}$", v) else False
+
     @staticmethod
     def extract(str: str) -> Optional[str]:
         """
@@ -99,16 +70,16 @@ class VersionCheck:
 
         Args:
             str: Source string
-        
+
         Returns:
             Best version found
         """
-        for pattern in VersionCheck._EXTRACTION_PATTERNS:
-            version = VersionCheck.find_higher(re.findall(pattern, str))
+        for pattern in Version._EXTRACTION_PATTERNS:
+            version = Version.find_higher(re.findall(pattern, str))
 
             if version:
                 return version
-        
+
         return None
 
     @staticmethod
@@ -118,18 +89,18 @@ class VersionCheck:
 
         Args:
             versions: Versions list
-        
+
         Returns:
             Best version found
         """
         v = "0"
 
         for ver in versions:
-            if not VersionCheck.is_valid(ver):
+            if not Version.is_valid(ver):
                 continue
 
-            v = ver if VersionCheck.compare(ver, ">", v) else v
-        
+            v = ver if Version.compare(ver, ">", v) else v
+
         return v if v != "0" else None
 
     @staticmethod
@@ -141,11 +112,11 @@ class VersionCheck:
             v1: First version string
             op: Comparison operation ("<", "<=", "==", ">=", ">")
             v2: Second version string
-            
+
         Returns:
             Result of comparison
         """
-        if op not in VersionCheck._SUPPORTED_COMPARISONS:
+        if op not in Version._SUPPORTED_COMPARISONS:
             raise Exception("Unsupported comparison")
 
         if op == "<":
@@ -165,28 +136,28 @@ class VersionCheck:
     def _normalize_wildcard(v1_in: str, v2_in: str) -> str:
         """
         Normalize version string by replacing "*" with "0" and removing both suffixes if one of them presents "*"
-        
+
         Args:
             v1_in: First version string to normalize
             v2_in: First version string to normalize
-            
+
         Returns:
             Normalized version string
         """
-        v1, s1 = VersionCheck._split_suffix(v1_in)
-        v2, s2 = VersionCheck._split_suffix(v2_in)
+        v1, s1 = Version._split_suffix(v1_in)
+        v2, s2 = Version._split_suffix(v2_in)
         # Removes wildcards from version
         if "*" in v1:
             v1 = re.sub(r"\*", "0", v1)
         if "*" in v2:
             v2 = re.sub(r"\*", "0", v2)
-        
+
         # Removes suffixes if any contains an wildcard
         if (s1 and "*" in s1) or (s2 and "*" in s2):
             s1, s2 = None, None
 
         return f"{v1}{s1}", f"{v2}{s2}"
-    
+
     @staticmethod
     def _split_suffix(v: str) -> Tuple[str]:
         """
@@ -194,74 +165,74 @@ class VersionCheck:
 
         Args:
             v: version string to be splitted
-        
+
         Returns:
             version first, suffix last
         """
-        match = re.match(VersionCheck._PATTERN, v)
+        match = re.match(Version._PATTERN, v)
         return match.group(1), match.group(2)
 
     @staticmethod
     def compare(v1_in: str, op: str, v2_in: str) -> bool:
         """
         Compare two version strings with the specified operation, handling special version formats
-        
+
         Args:
             v1_in: First version string
             op: Comparison operation ("<", "<=", "==", ">=", ">")
             v2_in: Second version string
-            
+
         Returns:
             Result of comparison
         """
-        if not VersionCheck.is_valid(v1_in) or not VersionCheck.is_valid(v2_in):
+        if not Version.is_valid(v1_in) or not Version.is_valid(v2_in):
             return False
 
         # Normalize "*" wildcards in version strings
         if "*" in v1_in or "*" in v2_in:
-            v1_in, v2_in = VersionCheck._normalize_wildcard(v1_in, v2_in)
-        
+            v1_in, v2_in = Version._normalize_wildcard(v1_in, v2_in)
+
         # Standard semantic version
         if re.match(f"^{version.VERSION_PATTERN}$", v1_in, flags=re.IGNORECASE|re.VERBOSE) and re.match(f"^{version.VERSION_PATTERN}$", v2_in, flags=re.IGNORECASE|re.VERBOSE):
             v1 = version.parse(v1_in)
             v2 = version.parse(v2_in)
 
-            return VersionCheck._execute_comparison(v1, op, v2)
-        
+            return Version._execute_comparison(v1, op, v2)
+
         # Fall back to custom version comparison for special formats
-        return VersionCheck._custom_compare(v1_in, op, v2_in)
+        return Version._custom_compare(v1_in, op, v2_in)
 
     @staticmethod
     def _custom_compare(v1_in: str, op: str, v2_in: str) -> bool:
         """
         Custom version comparison for formats not supported by packaging.version
-        
+
         Args:
             v1_in: First version string
             operation: Comparison operation ("<", "<=", "==", ">=", ">")
             v2_in: Second version string
-            
+
         Returns:
             Result of comparison
         """
-        v1, s1 = VersionCheck._split_suffix(v1_in)
-        v2, s2 = VersionCheck._split_suffix(v2_in)
-        
+        v1, s1 = Version._split_suffix(v1_in)
+        v2, s2 = Version._split_suffix(v2_in)
+
         # Split numeric parts
         try:
             v1_parts = [int(x) for x in v1.split(".")]
             v2_parts = [int(x) for x in v2.split(".")]
-            
+
             # Compare numeric parts
             for i in range(max(len(v1_parts), len(v2_parts))):
                 p1 = v1_parts[i] if i < len(v1_parts) else 0
                 p2 = v2_parts[i] if i < len(v2_parts) else 0
-                
+
                 if p1 < p2:
                     return op in ["<", "<="]
                 elif p1 > p2:
                     return op in [">", ">="]
-            
+
             # If there is a missing suffix
             if not s1 and not s2:
                 return op in ["==", "<=", ">="]
@@ -271,45 +242,77 @@ class VersionCheck:
                 return op in [">", ">="]
 
             # Compare suffixes
-            return VersionCheck._execute_comparison(s1, op, s2)
+            return Version._execute_comparison(s1, op, s2)
         except Exception:
             # Execute a lexicographical comparison as last resort
-            return VersionCheck._execute_comparison(v1_in, op, v2_in)
+            return Version._execute_comparison(v1_in, op, v2_in)
 
     @staticmethod
     def is_covered(v_in: str, min: str = None, max: str = None, including: bool = True) -> bool:
         """
         Check if a specific version is covered by a range
-        
+
         Args:
             v_in: Version string to check
             min: Lower limit in the range
-            max: Upper limit in the range 
+            max: Upper limit in the range
             including: Whether the range is including or not
-            
+
         Returns:
             True if version is covered, False otherwise
         """
         if not min and not max:
             return True
-                
+
         # Range checks with enhanced version comparison
         try:
             if including:
                 # If there is a minimum and the input is not above or equal to it, return false
-                if min and not VersionCheck.compare(v_in, ">=", min):
+                if min and not Version.compare(v_in, ">=", min):
                     return False
                 # If there is a maximum and the input is not below or equal to it, return false
-                elif max and not VersionCheck.compare(v_in, "<=", max):
+                elif max and not Version.compare(v_in, "<=", max):
                     return False
             else:
                 # If there is a minimum and the input is not above it, return false
-                if min and not VersionCheck.compare(v_in, ">", min):
+                if min and not Version.compare(v_in, ">", min):
                     return False
                 # If there is a maximum and the input is not below it, return false
-                elif max and not VersionCheck.compare(v_in, "<", max):
+                elif max and not Version.compare(v_in, "<", max):
                     return False
-                
+
             return True
         except Exception as e:
             raise Exception(f"Error while executing checkin version covered by range: {e}")
+
+
+# Version.is_valid("1.0") # True
+# Version.is_valid("1.0.0-alpha") # True
+# Version.is_valid("1.*.0") # False
+# Version.is_valid("version1") # False
+# Version.is_valid("1.x.0") # False
+# Version.is_valid("1..0") # False
+
+# Version.compare("1.0.0", "<", "1.0.1") # True
+# Version.compare("1.0", "<", "1.0.1") # True
+# Version.compare("1.2.3", "<", "1.2.3") # False
+# Version.compare("2.0.0", ">", "1.9.9") # True
+# Version.compare("1.0.0.1", ">", "1.0.0") # True
+# Version.compare("1.2.3", ">=", "1.2.3") # True
+# Version.compare("1.2.3", "==", "1.2.3") # True
+# Version.compare("1", "==", "1.0.0") # True
+
+# Version.compare("1.0.0-alpha", "<", "1.0.0-beta") # True
+# Version.compare("1.0.0+build1", ">", "1.0.0+build0") # True
+# Version.compare("1.0.0", ">", "1.0.0-beta") # True
+
+# Version.compare("1.2.*", "==", "1.2.0") # True
+# Version.compare("1.*", "<", "1.1.0") # True
+# Version.compare("1.0.*-alpha", "==", "1.0.0-alpha") # True
+# Version.compare("1.0.0-*", "==", "1.0.0-beta") # True
+
+# Version.is_covered("1.2.3", min="1.0.0", max="2.0.0") # True
+# Version.is_covered("0.9.0", min="1.0.0", max="2.0.0") # False
+# Version.is_covered("2.1.0", min="1.0.0", max="2.0.0") # False
+# Version.is_covered("2.0.0", min="1.0.0", max="2.0.0") # True
+# Version.is_covered("2.0.0", min="1.0.0", max="2.0.0", including=False) # False

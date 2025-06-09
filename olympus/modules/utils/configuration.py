@@ -59,7 +59,7 @@ class ConfigManager:
 
         for key, value in target.items():
             if key in source or merge_free:
-                if isinstance(source[key], dict) and isinstance(value, Mapping):
+                if isinstance(target[key], dict) and isinstance(value, Mapping):
                     result[key] = ConfigManager.deep_merge(result[key], value)
                 else:
                     result[key] = value
