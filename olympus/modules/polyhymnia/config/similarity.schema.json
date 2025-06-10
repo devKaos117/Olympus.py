@@ -1,0 +1,90 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/polyhymnia/config/similarity.schema.json",
+    "title": "polyhymnia.Similarity config schema",
+    "description": "Configuration dictionary to polyhymnia Similarity engine",
+    "type": "object",
+    "properties": {
+        "levenshtein": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "substitution": {
+                    "description": "",
+                    "type": "integer"
+                },
+                "insertion": {
+                    "description": "",
+                    "type": "integer"
+                },
+                "deletion": {
+                    "description": "",
+                    "type": "integer"
+                }
+            },
+            "required": ["substitution", "insertion", "deletion"]
+        },
+        "jaro_winkler": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "prefix_scale": {
+                    "description": "",
+                    "type": "number"
+                }
+            },
+            "required": ["prefix_scale"]
+        },
+        "ngram": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "n": {
+                    "description": "",
+                    "type": "integer",
+                    "minimum": 2
+                }
+            },
+            "required": ["n"]
+        },
+        "jaccard": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "stop_words": {
+                    "description": "",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": ["stop_words"]
+        },
+        "abbreviation": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "strict_mode": {
+                    "description": "",
+                    "type": "boolean"
+                }
+            },
+            "required": ["strict_mode"]
+        },
+        "weights": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "levenshtein": { "type": "integer" },
+                "jaro_winkler": { "type": "integer" },
+                "ngram": { "type": "integer" },
+                "abbreviation": { "type": "integer" },
+                "jaccard": { "type": "integer" },
+                "sequence_matcher": { "type": "integer" }
+            },
+            "required": ["levenshtein", "jaro_winkler", "ngram", "abbreviation", "jaccard", "sequence_matcher"]
+        }
+    },
+    "required": ["levenshtein", "jaro_winkler", "ngram", "jaccard", "abbreviation", "weights"]
+}

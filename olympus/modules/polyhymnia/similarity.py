@@ -1,72 +1,100 @@
 import re, difflib
-from typing import List, Tuple, Optional, Dict, Set, Union
-
+from typing import Dict, List, Tuple, Set, Union, Callable, Any
 from .normalize import Normalize
+
+from ..utils.configuration import ConfigManager
 
 
 class Similarity:
     """
     """
 
-    WEIGHTS = {
-        "levenshtein": 0.2,
-        "jaro_winkler": 0.25,
-        "sequence_matcher": 0.2,
-        "ngram": 0.15,
-        "abbreviation": 0.1,
-        "word_overlap": 0.1
-    }
+    _config = None
 
-    STOP_WORDS = {"the", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by", "a", "an", "as", "is", "was", "are", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did", "will", "would", "could", "should"}
+    @staticmethod
+    def configuration() -> Dict[str, Any]:
+        """
+        Returns the configuration
+        """
+        if Similarity._config is None:
+            Similarity._config = ConfigManager.load()
 
-    def levenshtein_distance(s1: str, s2: str, substitution_cost: int = 1, insertion_cost: int = 1, deletion_cost: int = 1) -> int:
+        return Similarity._config
+
+    @staticmethod
+    def levenshtein(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> int:
         """
         Calculate weighted Levenshtein distance
 
         Args:
             s1:
             s2:
+            normalizer: 
         
         Returns:
             similarity
-        """        
+        """
+        if not s1:
+            raise TypeError("Similarity.levenshtein() missing 1 required positional argument: 's1'")
+        if not s2:
+            raise TypeError("Similarity.levenshtein() missing 1 required positional argument: 's2'")
+        
         if len(s1) < len(s2):
-            s1, s2 = s2, s1
-            insertion_cost, deletion_cost = deletion_cost, insertion_cost
+            return Similarity.levenshtein(s2, s1)
         
+        # Load configuration
+        config = Similarity.configuration()['levenshtein']
+
+        # Normalize input
+        s1 = normalizer(s1)
+        s2 = normalizer(s2)
+
         if len(s2) == 0:
-            return len(s1) * deletion_cost
+            return len(s1) * config['deletion']
         
-        previous_row = list(range(0, (len(s2) + 1) * insertion_cost, insertion_cost))
+        previous_row = list(range(0, (len(s2) + 1) * config['insertion'], config['insertion']))
         
         for i, c1 in enumerate(s1):
-            current_row = [(i + 1) * deletion_cost]
+            current_row = [(i + 1) * config['deletion']]
+            
             for j, c2 in enumerate(s2):
-                insertions = previous_row[j + 1] + insertion_cost
-                deletions = current_row[j] + deletion_cost
-                substitutions = previous_row[j] + (substitution_cost if c1 != c2 else 0)
+                insertions = previous_row[j + 1] + config['insertion']
+                deletions = current_row[j] + config['deletion']
+                substitutions = previous_row[j] + (config['substitution'] if c1 != c2 else 0)
+
                 current_row.append(min(insertions, deletions, substitutions))
+            
             previous_row = current_row
         
         return previous_row[-1]
     
     @staticmethod
-    def jaro_winkler(s1: str, s2: str, prefix_scale: float = 0.1) -> float:
+    def jaro_winkler(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate Jaro-Winkler similarity
 
         Args:
             s1:
             s2:
+            normalizer: 
         
         Returns:
             similarity
         """
-        if not s1 or not s2:
-            return 0.0 if s1 != s2 else 1.0
+        if not s1:
+            raise TypeError("Similarity.jaro_winkler() missing 1 required positional argument: 's1'")
+        if not s2:
+            raise TypeError("Similarity.jaro_winkler() missing 1 required positional argument: 's2'")
         
         if s1 == s2:
             return 1.0
+        
+        # Load configuration
+        config = Similarity.configuration()['jaro_winkler']
+
+        # Normalize input
+        s1 = normalizer(s1)
+        s2 = normalizer(s2)
         
         match_window = max(len(s1), len(s2)) // 2 - 1
         match_window = max(0, match_window)
@@ -113,30 +141,40 @@ class Similarity:
             else:
                 break
         
-        return jaro + (prefix_scale * prefix * (1 - jaro))
+        return jaro + (config['prefix_scale'] * prefix * (1 - jaro))
     
     @staticmethod
-    def ngram(s1: str, s2: str, n: int = 2) -> float:
+    def ngram(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate n-gram Jaccard similarity
 
         Args:
             s1:
             s2:
+            normalizer: 
         
         Returns:
             similarity
         """
-        if not s1 or not s2:
-            return 0.0 if s1 != s2 else 1.0
+        if not s1:
+            raise TypeError("Similarity.ngram() missing 1 required positional argument: 's1'")
+        if not s2:
+            raise TypeError("Similarity.ngram() missing 1 required positional argument: 's2'")
+        
+        # Load configuration
+        config = Similarity.configuration()['ngram']
+
+        # Normalize input
+        s1 = normalizer(s1)
+        s2 = normalizer(s2)
         
         def get_ngrams(s: str, n: int) -> List[str]:
             if len(s) < n:
                 return [s]
             return [s[i:i+n] for i in range(len(s) - n + 1)]
         
-        ngrams1 = set(get_ngrams(s1, n))
-        ngrams2 = set(get_ngrams(s2, n))
+        ngrams1 = set(get_ngrams(s1, config['n']))
+        ngrams2 = set(get_ngrams(s2, config['n']))
         
         if not ngrams1 and not ngrams2:
             return 1.0
@@ -148,22 +186,32 @@ class Similarity:
         
         return intersection / union if union > 0 else 0.0
     
-    def word_overlap(s1: str, s2: str, remove_stop_words: bool = True) -> float:
+    def jaccard(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
-        Calculate word-level overlap similarity (Jaccard index of words)
+        Calculate word-level overlap Jaccard similarity
 
         Args:
             s1:
             s2:
+            normalizer: 
         
         Returns:
             similarity
         """
+        if not s1:
+            raise TypeError("Similarity.jaccard() missing 1 required positional argument: 's1'")
+        if not s2:
+            raise TypeError("Similarity.jaccard() missing 1 required positional argument: 's2'")
+        
+        # Load configuration
+        config = Similarity.configuration()['jaccard']
+
+        # Normalize input
+        s1 = normalizer(s1)
+        s2 = normalizer(s2)
+
         def tokenize(text: str) -> Set[str]:
-            words = set(re.findall(r"\b\w+\b", text.lower()))
-            if remove_stop_words:
-                words = words - Normalize.stop_words
-            return words
+            return set(re.findall(r"\b\w+\b", Normalize.stop_words(txt=text, words=config['stop_words'])))
         
         words1 = tokenize(s1)
         words2 = tokenize(s2)
@@ -178,17 +226,22 @@ class Similarity:
         
         return intersection / union if union > 0 else 0.0
     
-    def abbreviation_similarity(short: str, full: str, strict_abbreviation: bool = False) -> float:
+    def abbreviation(short: str, full: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate abbreviation similarity with multiple strategies
         
         Args:
             short: Normalized
             full: Normalized
+            normalizer:
+
+        Returns:
 
         """
-        if not short or not full:
-            return 0.0
+        if not short:
+            raise TypeError("Similarity.abbreviation() missing 1 required positional argument: 'short'")
+        if not full:
+            raise TypeError("Similarity.abbreviation() missing 1 required positional argument: 'full'")
         
         if short == full:
             return 1.0
@@ -196,6 +249,13 @@ class Similarity:
         # Direct containment
         if short in full:
             return 0.8
+        
+        # Load configuration
+        config = Similarity.configuration()['abbreviation']
+
+        # Normalize input
+        short = normalizer(short)
+        full = normalizer(full)
         
         # Acronym matching (first letters of words)
         full_words = re.findall(r"\b\w+\b", full)
@@ -205,7 +265,7 @@ class Similarity:
                 return 0.9
         
         # Character-by-character matching (subsequence)
-        if not strict_abbreviation:
+        if not config['strict_mode']:
             short_idx = 0
             for char in full:
                 if short_idx < len(short) and char == short[short_idx]:
@@ -216,7 +276,7 @@ class Similarity:
         
         return 0.0
     
-    def password_similarity(pwd1: str, pwd2: str) -> float:
+    def password(pwd1: str, pwd2: str) -> float:
         """
         Specialized password similarity considering common patterns
         
@@ -227,8 +287,10 @@ class Similarity:
         Returns:
             similarity
         """
-        if not pwd1 or not pwd2:
-            return 0.0 if pwd1 != pwd2 else 1.0
+        if not pwd1:
+            raise TypeError("Similarity.password() missing 1 required positional argument: 'pwd1'")
+        if not pwd2:
+            raise TypeError("Similarity.password() missing 1 required positional argument: 'pwd2'")
         
         # Exact match
         if pwd1 == pwd2:
@@ -267,79 +329,88 @@ class Similarity:
         
         return (len_sim * 0.3 + comp_sim * 0.3 + char_sim * 0.4)
     
-    def calculate(txt: str, source: str, weights: Optional[Dict[str, float]] = None, ngram_size = 2, strict_abbreviation = False, remove_stop_words = True) -> float:
+    def calculate(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
-        Calculate comprehensive similarity score based on use case
+        Calculate comprehensive similarity score based on multiple algorithms
         
         Args:
-            txt: Query string
-            source: Target string to compare against
-            weights: Custom weights for similarity methods
-            case_sensitive:
-            ngram_size:
-            strict_abbreviation:
-            remove_stop_words:
+            s1:
+            s2:
+            normalizer: 
+        
+        Returns:
+            similarity
         """
-        if not txt or not source:
-            return 0.0 if txt != source else 1.0
+        if not s1:
+            raise TypeError("Similarity.calculate() missing 1 required positional argument: 's1'")
+        if not s2:
+            raise TypeError("Similarity.calculate() missing 1 required positional argument: 's2'")
         
-        weights = weights or Similarity.WEIGHTS
-        
+        # Load configuration
+        weights = Similarity.configuration()['weights']
+
+        # Normalize input
+        s1 = normalizer(s1)
+        s2 = normalizer(s2)
+
         # Calculate individual similarities
         scores = {}
         
         # Levenshtein
-        if "levenshtein" in weights:
-            lev_dist = Similarity.levenshtein_distance(txt, source)
-            max_len = max(len(txt), len(source), 1)
-            scores['levenshtein'] = 1.0 - (lev_dist / max_len)
+        if weights['levenshtein'] != 0:
+            lev_dist = Similarity.levenshtein(s1, s2)
+            scores['levenshtein'] = 1.0 - (lev_dist / max(len(s1), len(s2), 1))
         
         # Jaro-Winkler
-        if "jaro_winkler" in weights:
-            scores['jaro_winkler'] = Similarity.jaro_winkler(txt, source)
-        
-        # Sequence Matcher
-        if "sequence_matcher" in weights:
-            scores['sequence_matcher'] = difflib.SequenceMatcher(None, txt, source).ratio()
+        if weights['jaro_winkler'] != 0:
+            scores['jaro_winkler'] = Similarity.jaro_winkler(s1, s2)
         
         # N-gram
-        if "ngram" in weights:
-            scores['ngram'] = Similarity.ngram(txt, source, n=ngram_size)
-        
-        # Abbreviation
-        if "abbreviation" in weights:
-            scores['abbreviation'] = Similarity.abbreviation_similarity(txt, source, strict_abbreviation)
+        if weights['ngram'] != 0:
+            scores['ngram'] = Similarity.ngram(s1, s2)
         
         # Word overlap
-        if "word_overlap" in weights:
-            scores['word_overlap'] = Similarity.word_overlap(txt, source, remove_stop_words)
+        if weights['jaccard'] != 0:
+            scores['jaccard'] = Similarity.jaccard(s1, s2)
+        
+        # Abbreviation
+        if weights['abbreviation'] != 0:
+            scores['abbreviation'] = max(Similarity.abbreviation(s1, s2), Similarity.abbreviation(s2, s1))
+        
+        # Sequence Matcher
+        if weights['sequence_matcher'] != 0:
+            scores['sequence_matcher'] = difflib.SequenceMatcher(None, s1, s2).ratio()
         
         # Weighted combination
         total_score = sum(weights.get(method, 0) * score for method, score in scores.items())
-        
-        return min(1.0, max(0.0, total_score))
+
+        return min(1.0, max(0.0, total_score / sum(weights.values())))
     
-    def best_matches(self, txt: str, map: Union[List[str], Dict[str, str]],  top_k: int = 5) -> List[Tuple[str, float]]:
+    def best_matches(txt: str, references: Union[List[str], Dict[str, str]], top_k: int = 5, normalizer: Callable[[str], str] = lambda s: s) -> List[Tuple[str, float]]:
         """
         Find best matching candidates with support for different data structures
         
         Args:
             txt: String to evaluate
-            map: List of strings or dict mapping keys to values
+            references: List of strings or dict mapping keys to values
             top_k: Maximum number of results
+            normalizer: 
         
         Returns:
             Best matches in descending order
         """
         if not txt:
-            return []
+            raise TypeError("Similarity.best_matches() missing 1 required positional argument: 'txt'")
+        
+        # Normalize input
+        txt = normalizer(txt)
         
         scores = []
         
-        if isinstance(map, dict):
-            items = map.items()
-        elif isinstance(map, list):
-            items = [(item, item) for item in map]
+        if isinstance(references, dict):
+            items = references.items()
+        elif isinstance(references, list):
+            items = [(item, item) for item in references]
         else:
             return []
         

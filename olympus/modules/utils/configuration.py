@@ -109,6 +109,27 @@ class ConfigManager:
                         "name": f"{module_name}.{class_name}",
                         "full_name": cls.__module__
                     }
+                
+                # Check if we're in a static method by examining the code context
+                elif frame.f_code.co_name != '<module>' and frame.f_code.co_name != 'load':
+                    # Try to get the class from the frame's globals by examining qualname
+                    frame_globals = frame.f_globals
+                    
+                    # Look for classes in the current module that contain this method
+                    for _, obj in frame_globals.items():
+                        if (inspect.isclass(obj) and 
+                            hasattr(obj, frame.f_code.co_name) and
+                            getattr(obj, frame.f_code.co_name).__code__ is frame.f_code):
+                            
+                            module_name = obj.__module__.split(".")[-2]
+                            class_name = obj.__name__.lower()
+                            
+                            return {
+                                "module": module_name,
+                                "class": class_name,
+                                "name": f"{module_name}.{class_name}",
+                                "full_name": obj.__module__
+                            }
         finally:
             del frame
         
