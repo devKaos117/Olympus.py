@@ -76,12 +76,12 @@
             "description": "",
             "type": "object",
             "properties": {
-                "levenshtein": { "type": "integer" },
-                "jaro_winkler": { "type": "integer" },
-                "ngram": { "type": "integer" },
-                "abbreviation": { "type": "integer" },
-                "jaccard": { "type": "integer" },
-                "sequence_matcher": { "type": "integer" }
+                "levenshtein": { "type": "number" },
+                "jaro_winkler": { "type": "number" },
+                "ngram": { "type": "number" },
+                "abbreviation": { "type": "number" },
+                "jaccard": { "type": "number" },
+                "sequence_matcher": { "type": "number" }
             },
             "required": ["levenshtein", "jaro_winkler", "ngram", "abbreviation", "jaccard", "sequence_matcher"]
         }
