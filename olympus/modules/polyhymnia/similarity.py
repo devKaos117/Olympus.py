@@ -186,6 +186,7 @@ class Similarity:
         
         return intersection / union if union > 0 else 0.0
     
+    @staticmethod
     def jaccard(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate word-level overlap Jaccard similarity
@@ -226,6 +227,7 @@ class Similarity:
         
         return intersection / union if union > 0 else 0.0
     
+    @staticmethod
     def abbreviation(short: str, full: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate abbreviation similarity with multiple strategies
@@ -276,6 +278,7 @@ class Similarity:
         
         return 0.0
     
+    @staticmethod
     def password(pwd1: str, pwd2: str) -> float:
         """
         Specialized password similarity considering common patterns
@@ -329,6 +332,7 @@ class Similarity:
         
         return (len_sim * 0.3 + comp_sim * 0.3 + char_sim * 0.4)
     
+    @staticmethod
     def calculate(s1: str, s2: str, normalizer: Callable[[str], str] = lambda s: s) -> float:
         """
         Calculate comprehensive similarity score based on multiple algorithms
@@ -386,6 +390,7 @@ class Similarity:
 
         return min(1.0, max(0.0, total_score / sum(weights.values())))
     
+    @staticmethod
     def best_matches(txt: str, references: Union[List[str], Dict[str, str]], top_k: int = 5, normalizer: Callable[[str], str] = lambda s: s) -> List[Tuple[str, float]]:
         """
         Find best matching candidates with support for different data structures
