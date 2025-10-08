@@ -1,24 +1,24 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/kronos/config/ratelimiter.schema.json",
-    "title": "kronos.RateLimiter config schema",
-    "description": "Configuration dictionary to kronos RateLimiter class",
-    "type": "object",
-    "properties": {
-        "limit": {
-            "description": "The limit of occurrences in the defined time period",
-            "type": "integer",
-            "minimum": 0
-        },
-        "time_period": {
-            "description": "The time period for the rating limit",
-            "type": "integer",
-            "minimum": 0
-        },
-        "multiprocessing_mode": {
-            "description": "Defines if the RateLimiter works for multiprocessing instead of multithreading",
-            "type": "boolean"
-        }
-    },
-    "required": ["limit", "time_period", "multiprocessing_mode"]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/kronos/config/ratelimiter.schema.json",
+	"title": "kronos.RateLimiter config schema",
+	"description": "Configuration dictionary to kronos RateLimiter class",
+	"type": "object",
+	"properties": {
+		"limit": {
+			"description": "The limit of occurrences in the defined time period",
+			"type": "integer",
+			"minimum": 0
+		},
+		"time_period": {
+			"description": "The time period for the rating limit",
+			"type": "integer",
+			"minimum": 0
+		},
+		"multiprocessing_mode": {
+			"description": "Defines if the RateLimiter works for multiprocessing instead of multithreading",
+			"type": "boolean"
+		}
+	},
+	"required": ["limit", "time_period", "multiprocessing_mode"]
 }

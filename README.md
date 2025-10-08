@@ -2,15 +2,15 @@
 <a href="https://github.com/devKaos117/Olympus.py/blob/main/LICENSE" target="_blank">![Static Badge](https://img.shields.io/badge/License-%23FFFFFF?style=flat&label=MIT&labelColor=%23000000&color=%23333333&link=https%3A%2F%2Fgithub%2Ecom%2FdevKaos117%2FOlympus%2Epy%2Fblob%2Fmain%2FLICENSE)</a>
 ## Index
 
--   [About](#about)
-    -   [Summary](#about-summary)
-    -   [Features](#about-features)
+-	[About](#about)
+	-	[Summary](#about-summary)
+	-	[Features](#about-features)
 - [Usage](#usage)
-    -   [Installation](#usage-installation)
-    -   [Examples](#usage-examples)
--   [Technical Description](#technical-description)
-    -   [Applied Technologies](#technical-description-techs)
-    -   [Dependencies](#technical-description-dependencies)
+	-	[Installation](#usage-installation)
+	-	[Examples](#usage-examples)
+-	[Technical Description](#technical-description)
+	-	[Applied Technologies](#technical-description-techs)
+	-	[Dependencies](#technical-description-dependencies)
 
 ---
 
@@ -22,11 +22,11 @@ A unified python environment integrating different custom tools for device and n
 ### Features <a name = "about-features"></a>
 
 - **Lorem ipsum**
-    - dolor sit amet
-    - consectetur adipiscing elit
+	- dolor sit amet
+	- consectetur adipiscing elit
 
 - **Phasellus placerat massa**
-    - vitae orci gravida
+	- vitae orci gravida
 
 ---
 

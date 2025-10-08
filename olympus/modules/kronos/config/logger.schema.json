@@ -1,35 +1,35 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/kronos/config/logger.schema.json",
-    "title": "kronos.Logger config schema",
-    "description": "Configuration dictionary to kronos Logger class",
-    "type": "object",
-    "properties": {
-        "console_level": {
-            "description": "Logging level for the console",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 99
-        },
-        "file_level": {
-            "description": "Logging level for the file output",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 99
-        },
-        "log_directory": {
-            "description": "Logging file output directory",
-            "type": "string"
-        },
-        "colorize": {
-            "description": "Defines if the color code will be aplied to the console logging",
-            "type": "boolean"
-        },
-        "json_indentation": {
-            "description": "Level of indentation for the JSON logging",
-            "type": ["integer", "null"],
-            "minimum": 0
-        }
-    },
-    "required": ["console_level", "file_level", "log_directory", "colorize", "json_indentation"]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/devKaos117/Olympus.py/blob/main/olympus/modules/kronos/config/logger.schema.json",
+	"title": "kronos.Logger config schema",
+	"description": "Configuration dictionary to kronos Logger class",
+	"type": "object",
+	"properties": {
+		"console_level": {
+			"description": "Logging level for the console",
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 99
+		},
+		"file_level": {
+			"description": "Logging level for the file output",
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 99
+		},
+		"log_directory": {
+			"description": "Logging file output directory",
+			"type": "string"
+		},
+		"colorize": {
+			"description": "Defines if the color code will be aplied to the console logging",
+			"type": "boolean"
+		},
+		"json_indentation": {
+			"description": "Level of indentation for the JSON logging",
+			"type": ["integer", "null"],
+			"minimum": 0
+		}
+	},
+	"required": ["console_level", "file_level", "log_directory", "colorize", "json_indentation"]
 }

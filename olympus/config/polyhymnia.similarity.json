@@ -1,27 +1,27 @@
 {
-    "levenshtein": {
-        "substitution": 1,
-        "insertion": 1,
-        "deletion": 1
-    },
-    "jaro_winkler": {
-        "prefix_scale": 0.1
-    },
-    "ngram": {
-        "n": 2
-    },
-    "jaccard": {
-        "stop_words": ["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "he", "in", "is", "it", "its", "of", "on", "that", "the", "to", "was", "will", "with", "or", "but", "not", "no", "yes", "i", "you", "we", "they", "she", "him", "her", "his", "this", "these", "those", "them", "there", "their", "what", "when","where", "who", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "only", "own","same", "so", "than", "too", "very", "can", "could", "should", "would", "have", "had", "been", "being", "do", "does", "did","am", "is", "are", "was", "were"]
-    },
-    "abbreviation": {
-        "strict_mode": false
-    },
-    "weights": {
-        "levenshtein": 1,
-        "jaro_winkler": 1,
-        "ngram": 1,
-        "jaccard": 1,
-        "abbreviation": 1,
-        "sequence_matcher": 1
-    }
+	"levenshtein": {
+		"substitution": 1,
+		"insertion": 1,
+		"deletion": 1
+	},
+	"jaro_winkler": {
+		"prefix_scale": 0.1
+	},
+	"ngram": {
+		"n": 2
+	},
+	"jaccard": {
+		"stop_words": ["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "he", "in", "is", "it", "its", "of", "on", "that", "the", "to", "was", "will", "with", "or", "but", "not", "no", "yes", "i", "you", "we", "they", "she", "him", "her", "his", "this", "these", "those", "them", "there", "their", "what", "when","where", "who", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "only", "own","same", "so", "than", "too", "very", "can", "could", "should", "would", "have", "had", "been", "being", "do", "does", "did","am", "is", "are", "was", "were"]
+	},
+	"abbreviation": {
+		"strict_mode": false
+	},
+	"weights": {
+		"levenshtein": 1,
+		"jaro_winkler": 1,
+		"ngram": 1,
+		"jaccard": 1,
+		"abbreviation": 1,
+		"sequence_matcher": 1
+	}
 }
