@@ -38,23 +38,23 @@ Project structure
 ```txt
 olympus/
 ├── config
-│   └── module.class.json
+│	└── module.class.json
 ├── database
-│   └── data.db
+│	└── data.db
 ├── log/
-│   └── yyyy-MM-ddThh-mm-ss.log
+│	└── yyyy-MM-ddThh-mm-ss.log
 ├── modules
-│   ├── module/
-│   │   ├── config/
-│   │   │   └── class.schema.json
-│   │   ├── utils/
-│   │   ├── __init__.py
-│   │   └── requirements.txt
-│   ├── hermes/
-│   ├── kronos/
-│   ├── morpheus/
-│   ├── utils/
-│   └── __init__.py
+│	├── module/
+│	│	├── config/
+│	│	│	└── class.schema.json
+│	│	├── utils/
+│	│	├── __init__.py
+│	│	└── requirements.txt
+│	├── hermes/
+│	├── kronos/
+│	├── morpheus/
+│	├── utils/
+│	└── __init__.py
 ├── __init__.py
 ├── pyproject.toml
 └── requirements.txt
